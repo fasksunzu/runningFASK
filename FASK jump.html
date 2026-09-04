@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/jpg" href="RUNNING FASK.jpg">
+    <title>Fask Game</title>
+
+    <style type="text/css">
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* =========================
+   BODY
+========================= */
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 100vh;
+
+    background: #222;
+
+    font-family: Arial, sans-serif;
+}
+
+
+/* =========================
+   GAME
+========================= */
+
+.game {
+    width: 800px;
+    height: 400px;
+
+    position: relative;
+    overflow: hidden;
+
+    background: #70c5ff;
+
+    border: 4px solid white;
+}
+
+
+/* =========================
+   MOVING BACKGROUND
+========================= */
+
+.moving-background {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 200%;
+    height: 100%;
+
+    background-image: url("assets/background/background.png");
+
+    background-repeat: repeat-x;
+
+    background-size: auto 100%;
+
+    background-position: left center;
+
+    z-index: 1;
+
+    animation: moveBackground 12s linear infinite;
+
+    animation-play-state: paused;
+
+    pointer-events: none;
+}
+
+@keyframes moveBackground {
+
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+
+/* =========================
+   SCORE
+========================= */
+
+.score {
+    position: absolute;
+    font-family: "ravie";
+    top: 15px;
+    right: 20px;
+
+    font-size: 24px;
+
+    font-weight: bold;
+
+    color: rgb(28, 2, 141);
+
+    z-index: 10;
+}
+
+
+/* =========================
+   PLAYER
+========================= */
+
+.player {
+    position: absolute;
+
+    width: 75px;
+    height: 75px;
+
+    left: 80px;
+    bottom: 45px;
+
+    background-image: url("assets/player/player.png");
+
+    background-size: contain;
+
+    background-repeat: no-repeat;
+
+    background-position: center;
+
+    z-index: 5;
+}
+
+
+/* =========================
+   PLAYER JUMP
+========================= */
+
+.player.jump {
+    animation: jump 0.7s ease-out;
+}
+
+@keyframes jump {
+
+    0% {
+        bottom: 45px;
+    }
+
+    50% {
+        bottom: 190px;
+    }
+
+    100% {
+        bottom: 45px;
+    }
+}
+
+
+/* =========================
+   FIREBALL / OBSTACLE
+========================= */
+
+.obstacle {
+    position: absolute;
+
+    width: 35px;
+    height: 35px;
+
+    left: 700px;
+    bottom: 65px;
+
+    background-image: url("assets/tiles/obstacle.png");
+
+    background-size: contain;
+
+    background-repeat: no-repeat;
+
+    background-position: center;
+
+    z-index: 7;
+
+    pointer-events: none;
+}
+
+
+/* =========================
+   DRAGON
+========================= */
+
+.dragon {
+    position: absolute;
+
+    width: 90px;
+    height: 90px;
+
+    right: 20px;
+    bottom: 60px;
+
+    z-index: 6;
+
+    pointer-events: none;
+}
+
+.dragon img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+}
+
+
+/* =========================
+   START SCREEN
+========================= */
+
+.start-screen {
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    background: rgba(0, 0, 0, 0.5);
+
+    color: white;
+
+    z-index: 30;
+}
+
+.start-screen h1 { 
+    font-family: "ravie";
+    font-size: 50px;
+    margin-bottom: 10px;
+    color: blue;
+}
+
+.start-screen p {
+    font-family: "ravie";
+    font-size: 20px;
+    color: chocolate;
+    margin-bottom: 20px;
+}
+
+.start-screen button {
+    padding: 12px 30px;
+    font-family: "ravie";
+    font-size: 20px;
+
+    cursor: pointer;
+
+    border: none;
+
+    border-radius: 8px;
+}
+
+.start-screen button:hover {
+    transform: scale(1.05);
+}
+
+
+/* =========================
+   GAME OVER
+========================= */
+
+.game-over {
+    display: none;
+
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    text-align: center;
+
+    background: rgba(219, 116, 116, 0.75);
+
+    padding: 30px 50px;
+
+    border-radius: 10px;
+
+    z-index: 20;
+}
+
+.game-over h1 {
+    font-family: "ravie";
+    margin-bottom: 10px;
+    color: red;
+}
+.game-over h2 {
+    font-family: "ravie";
+    margin-bottom: 10px;
+    color: rgb(44, 247, 4);
+}
+.game-over p {
+    font-family: "ravie";
+    margin-bottom: 20px;
+    color: aqua;
+    font-size: 20px;
+}
+
+.game-over button {
+    padding: 10px 25px;
+    font-family: "ravie";
+    font-size: 18px;
+
+    cursor: pointer;
+
+    border: none;
+
+    border-radius: 5px;
+}
+
+.game-over button:hover {
+    transform: scale(1.05);
+}
+    </style>
+</head>
+
+<body>
+
+    <div class="game">
+
+        <!-- MOVING BACKGROUND -->
+        <div class="moving-background"></div>
+
+
+        <!-- START SCREEN -->
+        <div class="start-screen">
+
+            <h1>FASK GAME</h1>
+
+            <p>avoid fire balls</p>
+
+            <button onclick="startGame()">
+                START GAME
+            </button>
+
+        </div>
+
+
+     <!-- SCORE -->
+<div class="score">
+    Score: 0
+</div>
+
+<div class="high-score">
+    High Score: <span id="high-score-display">0</span>
+</div>
+
+        <!-- PLAYER - ONLY ONE -->
+        <div class="player"></div>
+
+
+        <!-- DRAGON - ONLY ONE -->
+        <div class="dragon">
+
+            <img
+                src="assets/dragon/dragon.png"
+                alt="Dragon"
+            >
+
+        </div>
+
+
+        <!-- FIREBALL - ONLY ONE -->
+        <div class="obstacle"></div>
+
+
+        <!-- GROUND - ONLY ONE -->
+        <div class="ground"></div>
+
+
+     <!-- GAME OVER -->
+<div class="game-over">
+
+    <h1>GAME OVER </h1>
+    <h2>running fask cooked</h2>
+    <p>
+        Your score:
+        <span id="final-score">0</span>
+    </p>
+
+    <p>
+        High Score:
+        <span id="high-score-final">0</span>
+    </p>
+
+    <button onclick="restartGame()">
+        Restart
+    </button>
+
+</div>
+    </div>
+
+
+    <!-- SOUNDS -->
+
+    <audio id="jump-sound" src="assets/sounds/jump.mp3"></audio>
+
+    <audio id="gameover-sound" src="assets/sounds/gameover.mp3"></audio>
+
+    <audio id="music" src="assets/sounds/music.mp3" loop></audio>
+
+
+    <!-- JAVASCRIPT -->
+
+    <script>
+        const player = document.querySelector(".player");
+const obstacle = document.querySelector(".obstacle");
+const scoreDisplay = document.querySelector(".score");
+
+const gameOverScreen = document.querySelector(".game-over");
+const finalScore = document.querySelector("#final-score");
+
+const startScreen = document.querySelector(".start-screen");
+const movingBackground = document.querySelector(".moving-background");
+
+// HIGH SCORE DISPLAYS
+const highScoreDisplay = document.querySelector("#high-score-display");
+const highScoreFinal = document.querySelector("#high-score-final");
+
+
+// =========================
+// SOUNDS
+// =========================
+
+const jumpSound = document.querySelector("#jump-sound");
+const gameOverSound = document.querySelector("#gameover-sound");
+const music = document.querySelector("#music");
+
+
+// =========================
+// GAME VARIABLES
+// =========================
+
+let score = 0;
+
+// Get saved high score
+let highScore = Number(localStorage.getItem("highScore")) || 0;
+
+let obstaclePosition = 700;
+
+let gameRunning = false;
+let gameStarted = false;
+
+let lastTime = 0;
+
+let scoreTimer;
+
+
+// =========================
+// DISPLAY HIGH SCORE
+// =========================
+
+if (highScoreDisplay) {
+    highScoreDisplay.textContent = highScore;
+}
+
+if (highScoreFinal) {
+    highScoreFinal.textContent = highScore;
+}
+
+
+// =========================
+// START GAME
+// =========================
+
+function startGame() {
+
+    if (gameStarted) return;
+
+    music.play().catch(() => {});
+
+    gameStarted = true;
+    gameRunning = true;
+
+    startScreen.style.display = "none";
+
+    movingBackground.style.animationPlayState = "running";
+
+    obstaclePosition = 700;
+
+    obstacle.style.left =
+        obstaclePosition + "px";
+
+    scoreTimer = setInterval(
+        increaseScore,
+        100
+    );
+
+    lastTime = 0;
+
+    requestAnimationFrame(gameLoop);
+}
+
+
+// =========================
+// KEYBOARD JUMP
+// =========================
+
+document.addEventListener("keydown", function(event) {
+
+    if (!gameRunning) return;
+
+    if (
+        event.code === "Space" ||
+        event.code === "ArrowUp"
+    ) {
+
+        event.preventDefault();
+
+        jump();
+    }
+
+});
+
+
+// =========================
+// TOUCH / MOBILE JUMP
+// =========================
+
+document.querySelector(".game").addEventListener(
+    "pointerdown",
+    function(event) {
+
+        if (!gameRunning) return;
+
+        // Don't jump when pressing buttons
+        if (event.target.tagName === "BUTTON") {
+            return;
+        }
+
+        event.preventDefault();
+
+        jump();
+    }
+);
+
+
+// =========================
+// JUMP FUNCTION
+// =========================
+
+function jump() {
+
+    // Don't allow double jump
+    if (player.classList.contains("jump")) {
+        return;
+    }
+
+
+    // Jump sound
+    jumpSound.currentTime = 0;
+
+    jumpSound.play().catch(() => {});
+
+
+    // Make sure music is playing
+    music.play().catch(() => {});
+
+
+    // Add jump class
+    player.classList.add("jump");
+
+
+    // Remove jump after 700ms
+    setTimeout(function() {
+
+        player.classList.remove("jump");
+
+    }, 700);
+
+}
+
+
+// =========================
+// GAME LOOP
+// =========================
+
+function gameLoop(timestamp) {
+
+    if (!gameRunning) return;
+
+
+    if (!lastTime) {
+        lastTime = timestamp;
+    }
+
+
+    const deltaTime =
+        timestamp - lastTime;
+
+    lastTime = timestamp;
+
+
+    // =========================
+    // FIREBALL MOVES RIGHT → LEFT
+    // =========================
+
+    obstaclePosition -=
+        0.35 * deltaTime;
+
+
+    obstacle.style.left =
+        obstaclePosition + "px";
+
+
+    // =========================
+    // FIREBALL PASSES PLAYER
+    // =========================
+
+    if (obstaclePosition < -50) {
+
+        obstaclePosition = 700;
+
+        obstacle.style.left =
+            obstaclePosition + "px";
+    }
+
+
+    // Check collision
+    checkCollision();
+
+
+    // Continue game loop
+    requestAnimationFrame(gameLoop);
+}
+
+
+// =========================
+// SCORE
+// =========================
+
+function increaseScore() {
+
+    if (!gameRunning) return;
+
+
+    score++;
+
+
+    scoreDisplay.textContent =
+        "Score: " + score;
+}
+
+
+// =========================
+// COLLISION
+// =========================
+
+function checkCollision() {
+
+    if (!gameRunning) return;
+
+
+    const playerRect =
+        player.getBoundingClientRect();
+
+
+    const obstacleRect =
+        obstacle.getBoundingClientRect();
+
+
+    const collision =
+
+        playerRect.right >
+        obstacleRect.left &&
+
+        playerRect.left <
+        obstacleRect.right &&
+
+        playerRect.bottom >
+        obstacleRect.top &&
+
+        playerRect.top <
+        obstacleRect.bottom;
+
+
+    if (collision) {
+
+        gameOver();
+    }
+}
+
+
+// =========================
+// GAME OVER
+// =========================
+
+function gameOver() {
+
+    if (!gameRunning) return;
+
+
+    gameRunning = false;
+
+
+    // Pause background
+    movingBackground.style.animationPlayState =
+        "paused";
+
+
+    // Stop score timer
+    clearInterval(scoreTimer);
+
+
+    // Stop music
+    music.pause();
+
+    music.currentTime = 0;
+
+
+    // Play game over sound
+    gameOverSound.currentTime = 0;
+
+    gameOverSound.play().catch(() => {});
+
+
+    // =========================
+    // CHECK HIGH SCORE
+    // =========================
+
+    if (score > highScore) {
+
+        highScore = score;
+
+
+        // Save high score
+        localStorage.setItem(
+            "highScore",
+            highScore
+        );
+    }
+
+
+    // =========================
+    // DISPLAY FINAL SCORE
+    // =========================
+
+    finalScore.textContent =
+        score;
+
+
+    // =========================
+    // DISPLAY HIGH SCORE
+    // =========================
+
+    if (highScoreDisplay) {
+
+        highScoreDisplay.textContent =
+            highScore;
+    }
+
+
+    if (highScoreFinal) {
+
+        highScoreFinal.textContent =
+            highScore;
+    }
+
+
+    // Show game over screen
+    gameOverScreen.style.display =
+        "block";
+}
+
+
+// =========================
+// RESTART
+// =========================
+
+function restartGame() {
+
+    location.reload();
+}
+    </script>
+
+</body>
+
+</html>
